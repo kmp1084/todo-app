@@ -1,0 +1,23 @@
+# Dependencies
+**/node_modules/
+
+# Angular / build output
+**/dist/
+**/.angular/
+**/tmp/
+**/out-tsc/
+
+# Backend build output (later)
+**/target/
+**/build/
+
+# Env / secrets
+**/.env
+**/.env.*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log

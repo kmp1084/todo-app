@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Todos — Login / Register Wireframe</title>
+<style>
+  :root {
+    --line: #9aa0a6; --line-soft: #cfd3d7; --ink: #3c4043;
+    --muted: #80868b; --bg: #f5f6f7; --box: #fff; --accent: #e8eaed; --note: #b06000;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; color: var(--ink);
+    background: var(--bg); margin: 0; padding: 24px; line-height: 1.4; }
+  h1.page { font-size: 15px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 16px; }
+  .grid { display: flex; gap: 24px; flex-wrap: wrap; max-width: 860px; margin: 0 auto; }
+  .card { flex: 1 1 340px; background: var(--box); border: 2px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .card h2 { margin: 0; padding: 14px 20px; background: var(--accent); border-bottom: 2px solid var(--line); font-size: 16px; }
+  .body { padding: 20px; }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin: 14px 0 6px; }
+  .field { border: 2px solid var(--line-soft); border-radius: 6px; padding: 10px 12px; color: var(--muted); font-size: 14px; background: #fafbfb; }
+  .btn { display: block; text-align: center; border: 2px solid var(--line); background: var(--line); color: #fff; border-radius: 6px; padding: 11px; font-size: 14px; margin-top: 18px; }
+  .link { font-size: 13px; color: var(--muted); text-align: center; margin-top: 14px; }
+  .note { color: var(--note); font-size: 12px; font-style: italic; margin: 10px 0 0; }
+  .note::before { content: "◗ "; }
+</style>
+</head>
+<body>
+  <h1 class="page">Wireframe — Login / Register (Phase 4)</h1>
+  <div class="grid">
+
+    <div class="card">
+      <h2>Log in</h2>
+      <div class="body">
+        <div class="label">Email</div>
+        <div class="field">you@example.com</div>
+        <div class="label">Password</div>
+        <div class="field">••••••••</div>
+        <div class="btn">Log in</div>
+        <div class="link">No account? <b>Register</b></div>
+        <div class="link">Continue as <b>guest</b></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Register</h2>
+      <div class="body">
+        <div class="label">Email</div>
+        <div class="field">you@example.com</div>
+        <div class="label">Password</div>
+        <div class="field">at least 8 characters</div>
+        <div class="label">Confirm password</div>
+        <div class="field">••••••••</div>
+        <div class="btn">Create account</div>
+        <p class="note">On first login/register, any tasks saved as a guest in this browser are migrated into the new account (FR-11 AC7).</p>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

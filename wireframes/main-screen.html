@@ -1,0 +1,208 @@
+<!doctype html>
+<!-- Todo App main screen wireframe -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Todos — Main Screen Wireframe</title>
+<style>
+  :root {
+    --line: #9aa0a6;
+    --line-soft: #cfd3d7;
+    --ink: #3c4043;
+    --muted: #80868b;
+    --bg: #f5f6f7;
+    --box: #ffffff;
+    --accent: #e8eaed;
+    --note: #b06000;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    margin: 0;
+    padding: 24px;
+    line-height: 1.4;
+  }
+  .canvas { max-width: 860px; margin: 0 auto; }
+  .frame {
+    background: var(--box);
+    border: 2px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  /* App bar */
+  .appbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--accent);
+    border-bottom: 2px solid var(--line);
+  }
+  .appbar .title { font-size: 20px; font-weight: 700; letter-spacing: .3px; }
+  .appbar .title .logo {
+    display: inline-block; width: 22px; height: 22px; vertical-align: -4px;
+    border: 2px solid var(--line); border-radius: 5px; margin-right: 8px;
+  }
+  .auth-chip {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--muted);
+  }
+  .btn {
+    border: 2px solid var(--line); background: var(--box);
+    border-radius: 6px; padding: 7px 14px; font-size: 13px; color: var(--ink);
+    cursor: default;
+  }
+  .btn.solid { background: var(--line); color: #fff; border-color: var(--line); }
+  .section { padding: 20px; }
+  .section + .section { border-top: 2px dashed var(--line-soft); }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-bottom: 8px; }
+
+  /* Add form */
+  .field { border: 2px solid var(--line-soft); border-radius: 6px; padding: 10px 12px; color: var(--muted); font-size: 14px; background: #fafbfb; }
+  .row { display: flex; gap: 12px; }
+  .row > * { flex: 1; }
+  .add-title { margin-bottom: 12px; }
+  .add-desc { margin-bottom: 12px; min-height: 46px; }
+  .add-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+  .select::after { content: " ▾"; float: right; }
+
+  /* Filter bar */
+  .filterbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .filterbar .search { flex: 2 1 240px; }
+  .filterbar .select { flex: 1 1 130px; }
+
+  /* Task list */
+  .task {
+    display: flex; align-items: flex-start; gap: 14px;
+    border: 2px solid var(--line-soft); border-radius: 8px;
+    padding: 14px; margin-bottom: 12px; background: #fff;
+  }
+  .check { width: 20px; height: 20px; border: 2px solid var(--line); border-radius: 5px; flex: none; margin-top: 2px; }
+  .check.done { background: var(--line); position: relative; }
+  .check.done::after { content: "✓"; color: #fff; font-size: 13px; position: absolute; top: -2px; left: 3px; }
+  .task-main { flex: 1; }
+  .task-title { font-weight: 600; font-size: 15px; }
+  .task.completed .task-title { text-decoration: line-through; color: var(--muted); }
+  .task-desc { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .tag { font-size: 11px; border: 1.5px solid var(--line-soft); border-radius: 20px; padding: 3px 10px; color: var(--ink); background: #f7f8f9; }
+  .tag.prio-high { border-color: #d97070; color: #b23b3b; }
+  .tag.prio-med  { border-color: #d3a24e; color: #9a6b12; }
+  .tag.prio-low  { border-color: #6fae7a; color: #3f7d4b; }
+  .task-actions { display: flex; gap: 8px; flex: none; }
+  .icon-btn { width: 30px; height: 30px; border: 2px solid var(--line-soft); border-radius: 6px; text-align: center; line-height: 26px; font-size: 14px; color: var(--muted); }
+
+  .empty { text-align: center; color: var(--muted); padding: 28px; border: 2px dashed var(--line-soft); border-radius: 8px; font-size: 14px; }
+
+  /* Annotations */
+  .note { color: var(--note); font-size: 12px; font-style: italic; margin: 6px 0 0; }
+  .note::before { content: "◗ "; }
+  h1.page { font-size: 15px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 16px; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <h1 class="page">Wireframe — Main Task Screen (single screen)</h1>
+
+  <div class="frame">
+    <!-- App bar -->
+    <div class="appbar">
+      <div class="title"><span class="logo"></span>Todos</div>
+      <div class="auth-chip">
+        <span>Guest &nbsp;·&nbsp; tasks saved in this browser</span>
+        <span class="btn">Log in</span>
+        <span class="btn">Register</span>
+      </div>
+    </div>
+
+    <!-- Add task -->
+    <div class="section">
+      <div class="label">Add a task</div>
+      <div class="field add-title">Task title… (required)</div>
+      <div class="field add-desc">Description (optional)…</div>
+      <div class="row">
+        <div class="field select">Category ▾</div>
+        <div class="field select">Priority ▾</div>
+        <div class="field">Due date 📅</div>
+      </div>
+      <p class="note">Category dropdown lists presets (Work, Personal, Shopping…) plus a “+ Add new category” option (hybrid).</p>
+      <div class="add-actions">
+        <span class="btn">Clear</span>
+        <span class="btn solid">Add task</span>
+      </div>
+    </div>
+
+    <!-- Filters / sort / search -->
+    <div class="section">
+      <div class="label">Find &amp; filter</div>
+      <div class="filterbar">
+        <div class="field search">🔍 Search tasks…</div>
+        <div class="field select">Status: All ▾</div>
+        <div class="field select">Category: All ▾</div>
+        <div class="field select">Priority: All ▾</div>
+        <div class="field select">Sort: Due date ▾</div>
+      </div>
+      <p class="note">Status = All / Active / Completed. Search filters by title + description as you type.</p>
+    </div>
+
+    <!-- Task list -->
+    <div class="section">
+      <div class="label">Tasks (3)</div>
+
+      <div class="task">
+        <div class="check"></div>
+        <div class="task-main">
+          <div class="task-title">Finish Angular routing module</div>
+          <div class="task-desc">Wrap up lesson 15 and commit.</div>
+          <div class="meta">
+            <span class="tag prio-high">High</span>
+            <span class="tag">Work</span>
+            <span class="tag">Due Jul 18</span>
+          </div>
+        </div>
+        <div class="task-actions">
+          <span class="icon-btn">✎</span>
+          <span class="icon-btn">🗑</span>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="check"></div>
+        <div class="task-main">
+          <div class="task-title">Buy groceries</div>
+          <div class="meta">
+            <span class="tag prio-med">Medium</span>
+            <span class="tag">Shopping</span>
+          </div>
+        </div>
+        <div class="task-actions">
+          <span class="icon-btn">✎</span>
+          <span class="icon-btn">🗑</span>
+        </div>
+      </div>
+
+      <div class="task completed">
+        <div class="check done"></div>
+        <div class="task-main">
+          <div class="task-title">Call the dentist</div>
+          <div class="meta">
+            <span class="tag prio-low">Low</span>
+            <span class="tag">Personal</span>
+          </div>
+        </div>
+        <div class="task-actions">
+          <span class="icon-btn">✎</span>
+          <span class="icon-btn">🗑</span>
+        </div>
+      </div>
+
+      <p class="note">Delete (🗑) asks for confirmation first. Checkbox toggles complete (strikethrough).</p>
+
+      <div class="label" style="margin-top:22px;">Empty state (when no tasks match)</div>
+      <div class="empty">No tasks yet — add your first one above! 🎯</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
