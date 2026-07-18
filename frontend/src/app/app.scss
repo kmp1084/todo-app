@@ -1,0 +1,23 @@
+.app-toolbar {
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+.app-title {
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.placeholder {
+  color: rgba(0, 0, 0, 0.6);
+}
