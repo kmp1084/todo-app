@@ -26,11 +26,11 @@ Each phase below has a **Tests** line to keep this visible.
 
 ## Phase 1 — Angular frontend (in-memory data)
 
-- [ ] Create Angular workspace in `frontend/`
-- [ ] `Task` model + `TaskService` (in-memory)
-- [ ] Add task (TaskFormComponent, reactive form + validation)
-- [ ] List + empty state (TaskListComponent, TaskItemComponent)
-- [ ] Toggle complete
+- [x] Create Angular workspace in `frontend/` — plus Angular Material + app shell
+- [x] `Task` model + `TaskService` (in-memory, signals)
+- [x] Add task (TaskForm, reactive form + validation)
+- [x] List + empty state (TaskList) — TaskItem still to be extracted
+- [x] Toggle complete
 - [ ] Edit task
 - [ ] Delete task (with confirm)
 - [ ] Priority, category, due date, description

@@ -1,0 +1,15 @@
+<form [formGroup]="form" #formDir="ngForm" (ngSubmit)="submit(formDir)" class="task-form">
+  <mat-form-field appearance="outline" class="title-field">
+    <mat-label>New task</mat-label>
+    <input matInput formControlName="title" placeholder="What needs doing?" />
+
+    @if (form.controls.title.touched && form.controls.title.hasError('required')) {
+      <mat-error>Title is required</mat-error>
+    }
+    @if (form.controls.title.hasError('maxlength')) {
+      <mat-error>Title is too long (max 100 characters)</mat-error>
+    }
+  </mat-form-field>
+
+  <button matButton="filled" type="submit">Add task</button>
+</form>

@@ -1,0 +1,15 @@
+@if (tasks().length === 0) {
+  <p class="empty">No tasks yet — add your first one above! 🎯</p>
+} @else {
+  <p class="summary">{{ completedCount() }} of {{ totalCount() }} done</p>
+
+  <ul class="task-list">
+    @for (task of tasks(); track task.id) {
+      <li class="task-item">
+        <mat-checkbox [checked]="task.completed" (change)="toggle(task.id)">
+          <span class="task-title" [class.done]="task.completed">{{ task.title }}</span>
+        </mat-checkbox>
+      </li>
+    }
+  </ul>
+}
