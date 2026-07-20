@@ -4,6 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { TaskService } from '../../services/task.service';
+import { SubmittedErrorStateMatcher } from '../../shared/submitted-error-state-matcher';
 
 @Component({
   selector: 'app-task-form',
@@ -18,6 +19,8 @@ export class TaskForm {
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(100)]],
   });
+
+  readonly errorMatcher = new SubmittedErrorStateMatcher();
 
   submit(formDir: FormGroupDirective): void {
     if (this.form.invalid) {
