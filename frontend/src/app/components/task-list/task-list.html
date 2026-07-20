@@ -9,6 +9,14 @@
         <mat-checkbox [checked]="task.completed" (change)="toggle(task.id)">
           <span class="task-title" [class.done]="task.completed">{{ task.title }}</span>
         </mat-checkbox>
+        <button
+          matIconButton
+          type="button"
+          [attr.aria-label]="'Delete ' + task.title"
+          (click)="confirmDelete(task)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
       </li>
     }
   </ul>
