@@ -1,0 +1,20 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.task-title.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.edit-field {
+  width: 100%;
+}
+
+.row-actions {
+  display: flex;
+  flex: none;
+}

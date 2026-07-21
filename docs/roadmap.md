@@ -29,10 +29,10 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] Create Angular workspace in `frontend/` — plus Angular Material + app shell
 - [x] `Task` model + `TaskService` (in-memory, signals)
 - [x] Add task (TaskForm, reactive form + validation)
-- [x] List + empty state (TaskList) — TaskItem still to be extracted
+- [x] List + empty state (TaskList) + TaskItem extracted (input()/output())
 - [x] Toggle complete
-- [ ] Edit task
-- [ ] Delete task (with confirm)
+- [x] Edit task (inline edit: Enter saves, Escape cancels)
+- [x] Delete task (with confirm dialog)
 - [ ] Priority, category, due date, description
 - [ ] `CategoryService` + hybrid category picker (presets + add-new)
 - [ ] Manage categories: rename user categories; delete only when unused (blocked if in use)

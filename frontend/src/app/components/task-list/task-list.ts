@@ -1,15 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task';
 import { ConfirmDialog, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
+import { TaskItem } from '../task-item/task-item';
 
 @Component({
   selector: 'app-task-list',
-  imports: [MatCheckboxModule,MatButtonModule, MatIconModule],
+  imports: [TaskItem],
   templateUrl: './task-list.html',
   styleUrl: './task-list.scss',
 })
@@ -23,6 +21,10 @@ export class TaskList {
 
   toggle(id: string): void {
     this.taskService.toggleComplete(id);
+  }
+
+  rename(id: string, title: string): void {
+    this.taskService.updateTask(id, { title });
   }
 
   confirmDelete(task: Task): void {

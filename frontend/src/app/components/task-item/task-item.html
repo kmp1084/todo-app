@@ -1,0 +1,37 @@
+@if (editing()) {
+  <mat-form-field appearance="outline" class="edit-field" subscriptSizing="dynamic">
+    <input
+      matInput
+      [(ngModel)]="draftTitle"
+      (keydown.enter)="save()"
+      (keydown.escape)="cancelEditing()"
+      (blur)="save()"
+      aria-label="Edit task title"
+      autofocus
+    />
+  </mat-form-field>
+} @else {
+  <mat-checkbox [checked]="task().completed" (change)="toggled.emit()">
+    <span class="task-title" [class.done]="task().completed">{{ task().title }}</span>
+  </mat-checkbox>
+
+  <span class="row-actions">
+    <button
+      matIconButton
+      type="button"
+      [attr.aria-label]="'Edit ' + task().title"
+      (click)="startEditing()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <button
+      matIconButton
+      type="button"
+      [attr.aria-label]="'Delete ' + task().title"
+      (click)="deleteRequested.emit()"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </span>
+}
