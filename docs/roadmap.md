@@ -33,7 +33,7 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] Toggle complete
 - [x] Edit task (inline edit: Enter saves, Escape cancels)
 - [x] Delete task (with confirm dialog)
-- [ ] Priority, category, due date, description
+- [x] Priority, category, due date, description (form fields + row tags)
 - [ ] `CategoryService` + hybrid category picker (presets + add-new)
 - [ ] Manage categories: rename user categories; delete only when unused (blocked if in use)
 - [ ] Filters (state / category / priority)

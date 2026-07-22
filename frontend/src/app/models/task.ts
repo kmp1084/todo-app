@@ -11,3 +11,5 @@ export interface Task {
   createdAt: string;
   updatedAt: string;
 }
+
+export const DEFAULT_CATEGORIES: string[] = ['Work', 'Personal', 'Shopping', 'Health'];

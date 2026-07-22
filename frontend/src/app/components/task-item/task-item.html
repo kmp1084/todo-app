@@ -11,9 +11,30 @@
     />
   </mat-form-field>
 } @else {
-  <mat-checkbox [checked]="task().completed" (change)="toggled.emit()">
-    <span class="task-title" [class.done]="task().completed">{{ task().title }}</span>
-  </mat-checkbox>
+  <div class="task-main">
+    <mat-checkbox [checked]="task().completed" (change)="toggled.emit()">
+      <span class="task-title" [class.done]="task().completed">{{ task().title }}</span>
+    </mat-checkbox>
+
+    @if (task().description) {
+      <p class="task-description">{{ task().description }}</p>
+    }
+
+    <div class="task-meta">
+      <span
+        class="tag"
+        [class.priority-high]="task().priority === 'high'"
+        [class.priority-medium]="task().priority === 'medium'"
+        [class.priority-low]="task().priority === 'low'"
+      >{{ task().priority | titlecase }}</span>
+
+      <span class="tag">{{ task().category }}</span>
+
+      @if (task().dueDate) {
+        <span class="tag">Due {{ task().dueDate | date: 'mediumDate' }}</span>
+      }
+    </div>
+  </div>
 
   <span class="row-actions">
     <button

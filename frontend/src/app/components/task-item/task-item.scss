@@ -1,8 +1,14 @@
 :host {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   width: 100%;
+  gap: 8px;
+}
+
+.task-main {
+  flex: 1;
+  min-width: 0;
 }
 
 .task-title.done {
@@ -10,11 +16,47 @@
   opacity: 0.6;
 }
 
-.edit-field {
-  width: 100%;
+.task-description {
+  margin: 4px 0 0 32px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 0 32px;
+}
+
+.tag {
+  font-size: 11px;
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  padding: 2px 10px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.priority-high {
+  border-color: #d97070;
+  color: #b23b3b;
+}
+
+.priority-medium {
+  border-color: #d3a24e;
+  color: #9a6b12;
+}
+
+.priority-low {
+  border-color: #6fae7a;
+  color: #3f7d4b;
 }
 
 .row-actions {
   display: flex;
   flex: none;
+}
+
+.edit-field {
+  width: 100%;
 }

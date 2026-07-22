@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { Task } from '../../models/task';
+import { DatePipe, TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-task-item',
@@ -16,6 +17,8 @@ import { Task } from '../../models/task';
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
+    DatePipe,
+    TitleCasePipe,
   ],
   templateUrl: './task-item.html',
   styleUrl: './task-item.scss',
@@ -43,7 +46,7 @@ export class TaskItem {
     if (!this.editing()) {
       return;
     }
-    
+
     const trimmed = this.draftTitle().trim();
 
     if (trimmed && trimmed !== this.task().title) {

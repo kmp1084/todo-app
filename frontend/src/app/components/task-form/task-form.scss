@@ -1,9 +1,24 @@
 .task-form {
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
+  flex-direction: column;
+  margin-bottom: 8px;
 }
 
-.title-field {
-  flex: 1;
+.full-width {
+  width: 100%;
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.field-row mat-form-field {
+  flex: 1 1 160px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
 }

@@ -1,11 +1,11 @@
 <form [formGroup]="form" #formDir="ngForm" (ngSubmit)="submit(formDir)" class="task-form">
-  <mat-form-field appearance="outline" class="title-field">
+  <mat-form-field appearance="outline" class="full-width">
     <mat-label>New task</mat-label>
-    <input 
-        matInput 
-        formControlName="title" 
-        placeholder="What needs doing?" 
-        [errorStateMatcher]="errorMatcher"
+    <input
+      matInput
+      formControlName="title"
+      placeholder="What needs doing?"
+      [errorStateMatcher]="errorMatcher"
     />
 
     @if (form.controls.title.hasError('required')) {
@@ -16,5 +16,39 @@
     }
   </mat-form-field>
 
-  <button matButton="filled" type="submit">Add task</button>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Description (optional)</mat-label>
+    <textarea matInput formControlName="description" rows="2"></textarea>
+  </mat-form-field>
+
+  <div class="field-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Priority</mat-label>
+      <mat-select formControlName="priority">
+        @for (p of priorities; track p) {
+          <mat-option [value]="p">{{ p | titlecase }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        @for (c of categories; track c) {
+          <mat-option [value]="c">{{ c }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Due date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dueDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div class="form-actions">
+    <button matButton="filled" type="submit">Add task</button>
+  </div>
 </form>
