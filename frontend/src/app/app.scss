@@ -21,3 +21,8 @@
 .placeholder {
   color: rgba(0, 0, 0, 0.6);
 }
+
+.app-toolbar button {
+  --mat-icon-button-icon-color: var(--mat-sys-on-primary);
+  color: var(--mat-sys-on-primary);
+}

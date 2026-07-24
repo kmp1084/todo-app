@@ -30,6 +30,16 @@ export class TaskService {
     );
   }
 
+  countByCategory(category: string): number {
+    return this.tasks().filter((t) => t.category === category).length;
+  }
+
+  reassignCategory(from: string, to: string): void {
+    this.tasks.update((list) =>
+      list.map((t) => (t.category === from ? { ...t, category: to } : t)),
+    );
+  }
+
   deleteTask(id: string): void {
     this.tasks.update((list) => list.filter((t) => t.id !== id));
   }

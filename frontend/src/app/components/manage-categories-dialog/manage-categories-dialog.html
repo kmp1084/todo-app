@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Manage categories</h2>
+
+<mat-dialog-content>
+  @if (message()) {
+    <p class="dialog-error" role="alert">{{ message() }}</p>
+  }
+  <ul class="cat-list">
+    @for (c of categories(); track c) {
+      <li class="cat-row">
+        <span class="cat-name">{{ c }}</span>
+
+        @if (isPreset(c)) {
+          <span class="preset-badge">Preset</span>
+        } @else {
+          <span class="cat-actions">
+            <button matIconButton [attr.aria-label]="'Rename ' + c" (click)="rename(c)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button matIconButton [attr.aria-label]="'Delete ' + c" (click)="remove(c)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
+        }
+      </li>
+    }
+  </ul>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton mat-dialog-close>Close</button>
+</mat-dialog-actions>

@@ -51,6 +51,27 @@ describe('TaskService', () => {
     expect(service.completedCount()).toBe(0);
   });
 
+  it('counts tasks in a category', () => {
+    service.addTask({ title: 'A', priority: 'low', category: 'Work' });
+    service.addTask({ title: 'B', priority: 'low', category: 'Work' });
+    service.addTask({ title: 'C', priority: 'low', category: 'Personal' });
+
+    expect(service.countByCategory('Work')).toBe(2);
+    expect(service.countByCategory('Personal')).toBe(1);
+    expect(service.countByCategory('Nope')).toBe(0);
+  });
+
+  it('reassigns tasks from one category to another', () => {
+    service.addTask({ title: 'A', priority: 'low', category: 'Work' });
+    service.addTask({ title: 'B', priority: 'low', category: 'Personal' });
+
+    service.reassignCategory('Work', 'Job');
+
+    expect(service.countByCategory('Work')).toBe(0);
+    expect(service.countByCategory('Job')).toBe(1);
+    expect(service.countByCategory('Personal')).toBe(1); // untouched
+  });
+
   it('updates an existing task', () => {
     const task = addSample();
 

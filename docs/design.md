@@ -26,22 +26,25 @@ interface Task {
 deleted independently of tasks (FR-12), they are a **first-class stored list**, not just
 values derived from tasks.
 
-```ts
-interface Category {
-  id: string;
-  name: string;      // unique
-  preset: boolean;   // true = built-in (Work/Personal/…), cannot rename/delete
-}
-```
+> **Implemented as plain strings, not objects.** During Phase 1 (Module 8) we chose to
+> represent a category as just its **name** (a `string`), not a `{ id, name, preset }`
+> object. Tasks already store `category` as a string, so this avoids id↔name mapping and
+> is enough for every rule below. The object shape above is kept only as a possible future
+> option (e.g. if categories move to the backend with stable ids).
 
-- A `DEFAULT_CATEGORIES` constant seeds the preset entries (`preset: true`).
-- User-defined categories (`preset: false`) are stored alongside them.
-- The task form's category dropdown shows presets + user categories, plus "＋ Add new".
-- **Rename** (user categories only): update the `Category.name`, then update every task
-  whose `category` matches the old name → new name.
-- **Delete** (user categories only): allowed **only when no task uses the category**. If
-  any task still references it, the delete is blocked and the UI reports the in-use count.
-- Preset categories (`preset: true`) are locked — neither rename nor delete is offered.
+- A `DEFAULT_CATEGORIES: string[]` constant (in `models/task.ts`) seeds the presets.
+- `CategoryService` holds `signal<string[]>` (presets + user-defined) and exposes
+  `categories`, `isPreset`, `addCategory`, `renameCategory`, `deleteCategory`.
+- Names are unique **case-insensitively** (`'work'` == `'Work'`).
+- The task form's category dropdown shows presets + user categories, plus a "＋ Add new
+  category…" option that opens a reusable `PromptDialog`.
+- **Rename** (user categories only): update the name in the list, then cascade to every
+  task whose `category` matches (via `TaskService.reassignCategory`).
+- **Delete** (user categories only): allowed **only when no task uses the category**;
+  otherwise blocked, and `deleteCategory` returns `{ deleted: false, inUse: n }` so the
+  Manage-categories dialog shows an inline "can't delete" message.
+- Presets are detected via `isPreset(name)` and locked — the UI offers no rename/delete for
+  them, and the service refuses too (defense in depth).
 
 ```ts
 interface User {          // Phase 3 (backend)

@@ -34,8 +34,8 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] Edit task (inline edit: Enter saves, Escape cancels)
 - [x] Delete task (with confirm dialog)
 - [x] Priority, category, due date, description (form fields + row tags)
-- [ ] `CategoryService` + hybrid category picker (presets + add-new)
-- [ ] Manage categories: rename user categories; delete only when unused (blocked if in use)
+- [x] `CategoryService` + hybrid category picker (presets + add-new)
+- [x] Manage categories: rename user categories; delete only when unused (blocked if in use)
 - [ ] Filters (state / category / priority)
 - [ ] Sort + search
 - [ ] Responsive styling
