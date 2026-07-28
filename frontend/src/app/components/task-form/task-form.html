@@ -1,3 +1,4 @@
+<h2 class="section-label">Add a task</h2>
 <form [formGroup]="form" #formDir="ngForm" (ngSubmit)="submit(formDir)" class="task-form">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>New task</mat-label>
@@ -52,6 +53,7 @@
   </div>
 
   <div class="form-actions">
+    <button matButton="outlined" type="button" (click)="clear(formDir)">Clear</button>
     <button matButton="filled" type="submit">Add task</button>
   </div>
 </form>

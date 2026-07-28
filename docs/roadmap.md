@@ -36,8 +36,8 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] Priority, category, due date, description (form fields + row tags)
 - [x] `CategoryService` + hybrid category picker (presets + add-new)
 - [x] Manage categories: rename user categories; delete only when unused (blocked if in use)
-- [ ] Filters (state / category / priority)
-- [ ] Sort + search
+- [x] Filters (state / category / priority)
+- [x] Sort + search
 - [ ] Responsive styling
 - [ ] **Tests:** unit tests for `TaskService` (add/edit/delete/toggle), `CategoryService`
   (rename updates tasks, delete blocked when in use, presets protected), key components

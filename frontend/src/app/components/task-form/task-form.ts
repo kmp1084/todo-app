@@ -93,4 +93,8 @@ export class TaskForm {
 
     formDir.resetForm({ priority: 'medium', category: this.categoryService.categories()[0] });
   }
+
+  clear(formDir: FormGroupDirective): void {
+    formDir.resetForm({ priority: 'medium', category: this.categoryService.categories()[0] });
+  }
 }

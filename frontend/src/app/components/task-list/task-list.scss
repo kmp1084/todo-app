@@ -19,3 +19,19 @@
   text-align: center;
   padding: 24px;
 }
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.filter-bar .search-field {
+  flex: 2 1 220px;
+}
+
+.filter-bar mat-form-field {
+  flex: 1 1 130px;
+}

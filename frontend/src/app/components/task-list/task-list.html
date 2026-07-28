@@ -1,18 +1,68 @@
-@if (tasks().length === 0) {
+<h2 class="section-label">Find &amp; filter</h2>
+<div class="filter-bar">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search</mat-label>
+    <input matInput [(ngModel)]="search" placeholder="Search title or description…" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+    <mat-select [(ngModel)]="status">
+      <mat-option value="all">All</mat-option>
+      <mat-option value="active">Active</mat-option>
+      <mat-option value="completed">Completed</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Category</mat-label>
+    <mat-select [(ngModel)]="categoryFilter">
+      <mat-option value="all">All</mat-option>
+      @for (c of categories(); track c) {
+        <mat-option [value]="c">{{ c }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Priority</mat-label>
+    <mat-select [(ngModel)]="priorityFilter">
+      <mat-option value="all">All</mat-option>
+      @for (p of priorities; track p) {
+        <mat-option [value]="p">{{ p | titlecase }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Sort by</mat-label>
+    <mat-select [(ngModel)]="sortBy">
+      <mat-option value="created">Created</mat-option>
+      <mat-option value="due">Due date</mat-option>
+      <mat-option value="priority">Priority</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (totalCount() === 0) {
   <p class="empty">No tasks yet — add your first one above! 🎯</p>
 } @else {
   <p class="summary">{{ completedCount() }} of {{ totalCount() }} done</p>
 
-  <ul class="task-list">
-    @for (task of tasks(); track task.id) {
-      <li class="task-item">
-        <app-task-item
-          [task]="task"
-          (toggled)="toggle(task.id)"
-          (deleteRequested)="confirmDelete(task)"
-          (titleChanged)="rename(task.id, $event)"
-        />
-      </li>
-    }
-  </ul>
+  @if (visibleTasks().length === 0) {
+    <p class="empty">No tasks match your filters.</p>
+  } @else {
+    <ul class="task-list">
+      @for (task of visibleTasks(); track task.id) {
+        <li class="task-item">
+          <app-task-item
+            [task]="task"
+            (toggled)="toggle(task.id)"
+            (deleteRequested)="confirmDelete(task)"
+            (titleChanged)="rename(task.id, $event)"
+          />
+        </li>
+      }
+    </ul>
+  }
 }

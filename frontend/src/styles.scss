@@ -35,4 +35,14 @@ body {
   margin: 0;
   height: 100%;
 }
+
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0 0 8px;
+}
+
 /* You can add global styles to this file, and also import other style files */
