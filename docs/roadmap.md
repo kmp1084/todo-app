@@ -14,17 +14,17 @@ Testing is **not** a single phase between build and deploy — it happens in two
 
 Each phase below has a **Tests** line to keep this visible.
 
-## Phase 0 — Planning & scaffolding  ← current
+## Phase 0 — Planning & scaffolding  ✅ COMPLETE
 
 - [x] Repo folders (`docs/`, `wireframes/`, `frontend/`, `backend/`)
 - [x] Git initialized
 - [x] Requirements draft (`docs/requirements.md`)
 - [x] Design draft (`docs/design.md`)
-- [ ] Wireframes (`wireframes/`)
-- [ ] Review & approve docs
-- [ ] Create GitHub repo and push first commit
+- [x] Wireframes (`wireframes/`)
+- [x] Review & approve docs
+- [x] Create GitHub repo and push first commit
 
-## Phase 1 — Angular frontend (in-memory data)
+## Phase 1 — Angular frontend (in-memory data)  ✅ COMPLETE
 
 - [x] Create Angular workspace in `frontend/` — plus Angular Material + app shell
 - [x] `Task` model + `TaskService` (in-memory, signals)
@@ -38,9 +38,9 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] Manage categories: rename user categories; delete only when unused (blocked if in use)
 - [x] Filters (state / category / priority)
 - [x] Sort + search
-- [ ] Responsive styling
-- [ ] **Tests:** unit tests for `TaskService` (add/edit/delete/toggle), `CategoryService`
-  (rename updates tasks, delete blocked when in use, presets protected), key components
+- [x] Responsive styling (mobile-first; built with flex-wrap throughout)
+- [x] **Tests:** 41 passing — `TaskService`, `CategoryService`, `filterAndSortTasks`,
+  and all components (dialogs, form, list, item)
 
 ## Phase 2 — Persistence & deploy
 
