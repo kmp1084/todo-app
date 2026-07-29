@@ -45,8 +45,8 @@ Each phase below has a **Tests** line to keep this visible.
 ## Phase 2 — Persistence & deploy
 
 - [x] localStorage persistence in `TaskService` (signal loads from storage; `effect` saves on change)
-- [ ] Polish + accessibility pass
-- [ ] **Tests:** unit tests for the localStorage store (save/load/round-trip)
+- [x] Polish + accessibility pass (h1 page heading, banner landmark; probe-verified)
+- [x] **Tests:** localStorage save/load covered (`TestBed.tick()` to flush the effect)
 - [ ] Deploy frontend to Netlify / Cloudflare Pages
 - [ ] Live URL in README
 
