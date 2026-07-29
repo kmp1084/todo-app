@@ -8,6 +8,7 @@ describe('CategoryService', () => {
   let taskService: TaskService;
 
   beforeEach(() => {
+    localStorage.clear();
     TestBed.configureTestingModule({});
     service = TestBed.inject(CategoryService);
     taskService = TestBed.inject(TaskService);

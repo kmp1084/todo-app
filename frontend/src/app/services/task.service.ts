@@ -1,13 +1,22 @@
-import { Service, signal, computed } from '@angular/core';
+import { Service, signal, computed, effect } from '@angular/core';
 import { Task } from '../models/task';
+
+export const STORAGE_KEY = 'todos.tasks';
 
 @Service()
 export class TaskService {
-  private readonly tasks = signal<Task[]>([]);
+  private readonly tasks = signal<Task[]>(this.loadFromStorage());
 
   readonly allTasks = this.tasks.asReadonly();
   readonly totalCount = computed(() => this.tasks().length);
   readonly completedCount = computed(() => this.tasks().filter((t) => t.completed).length);
+
+ constructor() {
+    // Save to localStorage whenever the task list changes.
+    effect(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.tasks()));
+    });
+  }
 
   addTask(input: Omit<Task, 'id' | 'completed' | 'createdAt' | 'updatedAt'>): void {
     const now = new Date().toISOString();
@@ -52,5 +61,14 @@ export class TaskService {
           : t
       )
     );
+  }
+
+  private loadFromStorage(): Task[] {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? (JSON.parse(raw) as Task[]) : [];
+    } catch {
+      return [];
+    }
   }
 }

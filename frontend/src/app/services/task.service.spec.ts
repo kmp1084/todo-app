@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-
-import { TaskService } from './task.service';
+import { TaskService, STORAGE_KEY } from './task.service';
 
 describe('TaskService', () => {
   let service: TaskService;
 
   beforeEach(() => {
+    localStorage.clear();
     TestBed.configureTestingModule({});
     service = TestBed.inject(TaskService);
   });
@@ -89,5 +89,13 @@ describe('TaskService', () => {
 
     expect(service.allTasks()).toEqual([]);
     expect(service.totalCount()).toBe(0);
+  });
+
+  it('saves tasks to localStorage', () => {
+    service.addTask({ title: 'Persist me', priority: 'low', category: 'Work' });
+    TestBed.tick();
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
+    expect(stored.length).toBe(1);
+    expect(stored[0].title).toBe('Persist me');
   });
 });
