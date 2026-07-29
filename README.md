@@ -3,6 +3,9 @@
 A feature-rich task manager built as a full-SDLC learning project — Angular frontend
 first, Spring Boot backend later, deployed live.
 
+**🌐 Live demo:** https://scintillating-brioche-62b3c2.netlify.app/
+_(auto-deploys from `main` via Netlify on every push)_
+
 ## Repository structure
 
 | Folder        | Contents                                                        |

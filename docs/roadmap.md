@@ -42,13 +42,13 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] **Tests:** 41 passing — `TaskService`, `CategoryService`, `filterAndSortTasks`,
   and all components (dialogs, form, list, item)
 
-## Phase 2 — Persistence & deploy
+## Phase 2 — Persistence & deploy  ✅ COMPLETE
 
 - [x] localStorage persistence in `TaskService` (signal loads from storage; `effect` saves on change)
 - [x] Polish + accessibility pass (h1 page heading, banner landmark; probe-verified)
 - [x] **Tests:** localStorage save/load covered (`TestBed.tick()` to flush the effect)
-- [ ] Deploy frontend to Netlify / Cloudflare Pages
-- [ ] Live URL in README
+- [x] Deploy frontend to Netlify (auto-deploy from `main`; netlify.toml, Node 22 pinned)
+- [x] Live URL in README — https://scintillating-brioche-62b3c2.netlify.app/
 
 ## Phase 3 — Backend (tasks API)
 
