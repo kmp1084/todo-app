@@ -31,7 +31,8 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] Add task (TaskForm, reactive form + validation)
 - [x] List + empty state (TaskList) + TaskItem extracted (input()/output())
 - [x] Toggle complete
-- [x] Edit task (inline edit: Enter saves, Escape cancels)
+- [x] Edit task — full Edit dialog (title, description, priority, category, due date;
+  replaced the earlier title-only inline edit)
 - [x] Delete task (with confirm dialog)
 - [x] Priority, category, due date, description (form fields + row tags)
 - [x] `CategoryService` + hybrid category picker (presets + add-new)

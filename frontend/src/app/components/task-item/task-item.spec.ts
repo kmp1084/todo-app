@@ -18,10 +18,7 @@ describe('TaskItem', () => {
   };
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [TaskItem],
-    }).compileComponents();
-
+    await TestBed.configureTestingModule({ imports: [TaskItem] }).compileComponents();
     fixture = TestBed.createComponent(TaskItem);
     fixture.componentRef.setInput('task', sampleTask);
     component = fixture.componentInstance;
@@ -32,54 +29,28 @@ describe('TaskItem', () => {
     expect(component).toBeTruthy();
   });
 
-  it('pre-fills the draft title when editing starts', () => {
-    expect(component.editing()).toBe(false);
-
-    component.startEditing();
-
-    expect(component.editing()).toBe(true);
-    expect(component.draftTitle()).toBe('Buy milk');
+  it('renders the task title', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.task-title')?.textContent).toContain('Buy milk');
   });
 
-  it('emits titleChanged with a trimmed title when it actually changed', () => {
-    let emitted: string | undefined;
-    component.titleChanged.subscribe((title) => {
-      emitted = title;
-    });
+  it('emits editRequested when the edit button is clicked', () => {
+    let emitted = false;
+    component.editRequested.subscribe(() => (emitted = true));
 
-    component.startEditing();
-    component.draftTitle.set('   Buy oat milk   ');
-    component.save();
+    const btn = fixture.nativeElement.querySelector('button[aria-label="Edit Buy milk"]') as HTMLButtonElement;
+    btn.click();
 
-    expect(emitted).toBe('Buy oat milk');
-    expect(component.editing()).toBe(false);
+    expect(emitted).toBe(true);
   });
 
-  it('does not emit when the new title is blank', () => {
-    let emitted: string | undefined;
-    component.titleChanged.subscribe((title) => {
-      emitted = title;
-    });
+  it('emits deleteRequested when the delete button is clicked', () => {
+    let emitted = false;
+    component.deleteRequested.subscribe(() => (emitted = true));
 
-    component.startEditing();
-    component.draftTitle.set('    ');
-    component.save();
+    const btn = fixture.nativeElement.querySelector('button[aria-label="Delete Buy milk"]') as HTMLButtonElement;
+    btn.click();
 
-    expect(emitted).toBeUndefined();
-  });
-
-  it('discards the draft when cancelled, even if a blur-save follows', () => {
-    let emitted: string | undefined;
-    component.titleChanged.subscribe((title) => {
-      emitted = title;
-    });
-
-    component.startEditing();
-    component.draftTitle.set('Should be discarded');
-    component.cancelEditing();
-    component.save(); // the stray blur-triggered save
-
-    expect(emitted).toBeUndefined();
-    expect(component.editing()).toBe(false);
+    expect(emitted).toBe(true);
   });
 });

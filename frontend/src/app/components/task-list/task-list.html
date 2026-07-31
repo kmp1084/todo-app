@@ -55,12 +55,12 @@
     <ul class="task-list">
       @for (task of visibleTasks(); track task.id) {
         <li class="task-item">
-          <app-task-item
-            [task]="task"
-            (toggled)="toggle(task.id)"
-            (deleteRequested)="confirmDelete(task)"
-            (titleChanged)="rename(task.id, $event)"
-          />
+        <app-task-item
+          [task]="task"
+          (toggled)="toggle(task.id)"
+          (deleteRequested)="confirmDelete(task)"
+          (editRequested)="edit(task)"
+        />
         </li>
       }
     </ul>

@@ -10,6 +10,7 @@ import { CategoryService } from '../../services/category.service';
 import { Priority, Task } from '../../models/task';
 import { ConfirmDialog, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
 import { TaskItem } from '../task-item/task-item';
+import { EditTaskDialog } from '../edit-task-dialog/edit-task-dialog';
 import {
   filterAndSortTasks,
   SortBy,
@@ -61,8 +62,8 @@ export class TaskList {
     this.taskService.toggleComplete(id);
   }
 
-  rename(id: string, title: string): void {
-    this.taskService.updateTask(id, { title });
+  edit(task: Task): void {
+    this.dialog.open(EditTaskDialog, { data: task, width: '480px' });
   }
 
   confirmDelete(task: Task): void {
