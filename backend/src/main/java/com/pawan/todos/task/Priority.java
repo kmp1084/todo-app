@@ -1,3 +1,9 @@
 package com.pawan.todos.task;
 
-public enum Priority { LOW, MEDIUM, HIGH }
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public enum Priority {
+    @JsonProperty("low") LOW,
+    @JsonProperty("medium") MEDIUM,
+    @JsonProperty("high") HIGH
+}
