@@ -2,6 +2,7 @@ package com.pawan.todos.task;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,7 +30,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponse> create(@RequestBody TaskRequest request) {
+    public ResponseEntity<TaskResponse> create(@Valid @RequestBody TaskRequest request) {
         TaskResponse created = service.create(request);
         return ResponseEntity
                 .created(URI.create("/api/tasks/" + created.id()))   // ④ 201 + Location
@@ -38,7 +39,7 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public TaskResponse update(@PathVariable UUID id,
-                               @RequestBody TaskRequest request) {
+                              @Valid @RequestBody TaskRequest request) {
         return service.update(id, request);
     }
 
