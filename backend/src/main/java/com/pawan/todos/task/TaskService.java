@@ -6,18 +6,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional(readOnly = true)// ① a bean; also documents intent
+@Transactional(readOnly = true)
 public class TaskService {
 
-    private final TaskRepository repository;   // ② final: assigned once, in the constructor
+    private final TaskRepository repository;
 
     public TaskService(TaskRepository repository) {
-        this.repository = repository;          // ③ constructor injection - the proxy from Module 4
+        this.repository = repository;
     }
 
     public List<TaskResponse> findAll() {
-        return repository.findAll().stream()   // ④ stream ≈ a JS array chain
-                .map(TaskResponse::from)       // ⑤ method reference ≈ t -> TaskResponse.from(t)
+        return repository.findAll().stream()
+                .map(TaskResponse::from)
                 .toList();
     }
 
@@ -30,7 +30,7 @@ public class TaskService {
         Task task = new Task(request.title(), request.description(),
                 request.priority(), request.category(), request.dueDate());
         task.setCompleted(Boolean.TRUE.equals(request.completed()));
-        return TaskResponse.from(repository.save(task));   // ⑥ id is null → persist
+        return TaskResponse.from(repository.save(task));
     }
 
     @Transactional
@@ -42,7 +42,7 @@ public class TaskService {
         task.setCategory(request.category());
         task.setDueDate(request.dueDate());
         task.setCompleted(Boolean.TRUE.equals(request.completed()));
-        repository.flush();
+        repository.flush(); // force the UPDATE now so @PreUpdate sets updatedAt before we map
         return TaskResponse.from(task);
     }
 
