@@ -51,14 +51,34 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] Deploy frontend to Netlify (auto-deploy from `main`; netlify.toml, Node 22 pinned)
 - [x] Live URL in README — https://scintillating-brioche-62b3c2.netlify.app/
 
-## Phase 3 — Backend (tasks API)
+## Phase 3 — Backend (tasks API)  🚧 IN PROGRESS
 
-- [ ] Spring Boot project in `backend/`
-- [ ] `Task` entity + repository + REST controller
-- [ ] H2 database
-- [ ] `TaskService` gains an HTTP store; used when logged in
-- [ ] CORS + error handling
-- [ ] **Tests:** backend unit/integration tests (controller + repository); frontend HTTP store tests (mocked)
+The backend is feature-complete and tested; what remains is wiring Angular to it.
+
+- [x] Spring Boot project in `backend/` (Boot 4.1, Java 21 / Temurin, Maven wrapper — no
+  system Maven needed)
+- [x] `Task` entity + `TaskRepository` + `TaskController`
+  - UUID primary key, `@Enumerated(STRING)` priority, `@PrePersist`/`@PreUpdate` timestamps
+  - Spring Data derived queries (`findByCompleted`, `findByTitleContainingIgnoreCase`, …)
+  - Full CRUD — `GET`, `POST` (201 + `Location`), `PUT`, `DELETE` (204)
+- [x] H2 database (file-backed under `backend/data/`, `ddl-auto=update`, console enabled)
+- [x] DTOs (`TaskRequest` / `TaskResponse` records) kept separate from the entity
+- [x] Validation + error handling
+  - Bean Validation on the DTO (`@NotBlank` / `@NotNull` / `@Size` + `@Valid`)
+  - RFC 9457 problem-detail responses via `ApiExceptionHandler`
+  - `@Transactional` service layer (dirty checking instead of an explicit `save()`)
+- [x] CORS for the Angular dev origin (origins externalised to `app.cors.allowed-origins`)
+- [x] **Tests (backend):** 9 passing — plain unit (Mockito), `@DataJpaTest` repository slice,
+  `@WebMvcTest` controller slice, `@SpringBootTest` context check
+- [ ] Frontend `TaskService` gains an HTTP store (localStorage stays for guest mode)
+- [ ] **Tests (frontend):** HTTP store tests with `HttpTestingController`
+
+> **Note — Spring Boot 4 is very new, and most tutorials target Boot 3.** Differences hit
+> during this phase: starters renamed (`spring-boot-starter-web` → `-webmvc`; the single
+> `-test` starter split into `-webmvc-test` / `-data-jpa-test` / `-validation-test`); Boot 4
+> ships **Jackson 3**, which is stricter — a primitive `boolean` in a DTO fails to
+> deserialise when the JSON omits it, so use `Boolean`; `@MockBean` is gone, replaced by
+> `@MockitoBean`; and `@WebMvcTest` / `@DataJpaTest` moved packages.
 
 ## Phase 4 — Authentication
 
