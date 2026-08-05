@@ -1,6 +1,5 @@
-package com.pawan.todos;
+package com.pawan.todos.task;
 
-import com.pawan.todos.task.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

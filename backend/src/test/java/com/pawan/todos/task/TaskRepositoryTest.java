@@ -1,8 +1,5 @@
-package com.pawan.todos;
+package com.pawan.todos.task;
 
-import com.pawan.todos.task.Priority;
-import com.pawan.todos.task.Task;
-import com.pawan.todos.task.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;   // ← Boot 4 package

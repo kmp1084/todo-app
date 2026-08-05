@@ -1,6 +1,5 @@
-package com.pawan.todos;
+package com.pawan.todos.task;
 
-import com.pawan.todos.task.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;      // ← Boot 4 package
