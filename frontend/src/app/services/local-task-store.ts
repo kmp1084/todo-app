@@ -7,10 +7,18 @@ export const STORAGE_KEY = 'todos.tasks';
 export class LocalTaskStore implements TaskStore {
   private readonly tasksSignal = signal<Task[]>(this.loadFromStorage());
   readonly tasks = this.tasksSignal.asReadonly();
+  private readonly errorSignal = signal<string | null>(null);
+  readonly error = this.errorSignal.asReadonly();
 
   constructor() {
     effect(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.tasksSignal()));
+      const snapshot = JSON.stringify(this.tasksSignal());
+      try {
+        localStorage.setItem(STORAGE_KEY, snapshot);
+      } catch (err) {
+        console.error('Failed to save tasks', err);
+        this.errorSignal.set('Could not save locally — storage may be full or blocked.');
+      }
     });
   }
 
@@ -62,5 +70,9 @@ export class LocalTaskStore implements TaskStore {
     } catch {
       return [];
     }
+  }
+
+  clearError(): void {
+    this.errorSignal.set(null);
   }
 }

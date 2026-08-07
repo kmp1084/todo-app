@@ -33,3 +33,25 @@
   --mat-icon-button-icon-color: var(--mat-sys-on-primary);
   color: var(--mat-sys-on-primary);
 }
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  background: var(--mat-sys-error-container, #fdecea);
+  color: var(--mat-sys-on-error-container, #611a15);
+}
+
+.error-banner button {
+  background: none;
+  border: none;
+  padding: 4px;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}

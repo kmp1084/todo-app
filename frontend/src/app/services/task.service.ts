@@ -9,6 +9,7 @@ export class TaskService {
   readonly allTasks = this.store.tasks;
   readonly totalCount = computed(() => this.allTasks().length);
   readonly completedCount = computed(() => this.allTasks().filter((t) => t.completed).length);
+  readonly error = this.store.error;
 
   addTask(input: NewTask): void {
     this.store.add(input);
@@ -32,5 +33,9 @@ export class TaskService {
 
   reassignCategory(from: string, to: string): void {
     this.store.reassignCategory(from, to);
+  }
+
+  clearError(): void {
+    this.store.clearError();
   }
 }

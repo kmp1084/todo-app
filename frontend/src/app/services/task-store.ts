@@ -4,11 +4,13 @@ import { LocalTaskStore } from './local-task-store';
 
 export interface TaskStore {
   readonly tasks: Signal<Task[]>;
+  readonly error: Signal<string | null>;
   add(input: NewTask): void;
   update(id: string, changes: TaskChanges): void;
   remove(id: string): void;
   toggle(id: string): void;
   reassignCategory(from: string, to: string): void;
+  clearError(): void;
 }
 
 export const TASK_STORE = new InjectionToken<TaskStore>('TASK_STORE', {

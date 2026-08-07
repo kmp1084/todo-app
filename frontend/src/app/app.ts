@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TaskForm } from './components/task-form/task-form';
 import { TaskList } from './components/task-list/task-list';
 import { ManageCategoriesDialog } from './components/manage-categories-dialog/manage-categories-dialog';
+import { TaskService } from './services/task.service';
 
 @Component({
   selector: 'app-root',
@@ -15,9 +16,16 @@ import { ManageCategoriesDialog } from './components/manage-categories-dialog/ma
 })
 export class App {
   private readonly dialog = inject(MatDialog);
+  private readonly taskService = inject(TaskService);
+  
   protected readonly title = signal('Todos');
+  protected readonly error = this.taskService.error;
 
   manageCategories(): void {
     this.dialog.open(ManageCategoriesDialog, { width: '400px' });
+  }
+
+  dismissError(): void {
+    this.taskService.clearError();
   }
 }

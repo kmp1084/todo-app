@@ -8,6 +8,12 @@
 </mat-toolbar>
 
 <main class="content">
+  @if (error(); as message) {
+    <div class="error-banner" role="alert">
+      <span>{{ message }}</span>
+      <button type="button" (click)="dismissError()" aria-label="Dismiss error">✕</button>
+    </div>
+  }
   <app-task-form />
   <app-task-list />
 </main>
