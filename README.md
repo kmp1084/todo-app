@@ -31,9 +31,12 @@ See [docs/roadmap.md](docs/roadmap.md). In short:
 0. ✅ Requirements, wireframes, repo scaffolding
 1. ✅ Angular frontend, in-memory data
 2. ✅ localStorage persistence (guest mode) + polish, deploy live
-3. 🚧 Spring Boot backend + tasks REST API ← _current_ (API done; Angular integration pending)
-4. Authentication (accounts, login, per-user tasks)
+3. ✅ Spring Boot backend + tasks REST API, wired to the frontend
+4. 🚧 Authentication (accounts, login, per-user tasks) ← _current_
 5. Full-stack deploy + CI/CD
+
+The frontend talks to the API when run locally (`npm start`) and falls back to
+localStorage in production builds, since the backend isn't hosted until Phase 5.
 
 ## Getting started
 
