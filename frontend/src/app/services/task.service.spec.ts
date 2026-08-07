@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { TaskService, STORAGE_KEY } from './task.service';
+import { TaskService } from './task.service';
+import { STORAGE_KEY } from './local-task-store';
 
 describe('TaskService', () => {
   let service: TaskService;

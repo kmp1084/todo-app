@@ -13,3 +13,5 @@ export interface Task {
 }
 
 export const DEFAULT_CATEGORIES: string[] = ['Work', 'Personal', 'Shopping', 'Health'];
+export type NewTask = Omit<Task, 'id' | 'completed' | 'createdAt' | 'updatedAt'>;
+export type TaskChanges = Partial<Omit<Task, 'id' | 'createdAt'>>;

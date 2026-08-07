@@ -1,74 +1,36 @@
-import { Service, signal, computed, effect } from '@angular/core';
-import { Task } from '../models/task';
-
-export const STORAGE_KEY = 'todos.tasks';
+import { Service, computed, inject } from '@angular/core';
+import { NewTask, TaskChanges } from '../models/task';
+import { TASK_STORE } from './task-store';
 
 @Service()
 export class TaskService {
-  private readonly tasks = signal<Task[]>(this.loadFromStorage());
+  private readonly store = inject(TASK_STORE);
 
-  readonly allTasks = this.tasks.asReadonly();
-  readonly totalCount = computed(() => this.tasks().length);
-  readonly completedCount = computed(() => this.tasks().filter((t) => t.completed).length);
+  readonly allTasks = this.store.tasks;
+  readonly totalCount = computed(() => this.allTasks().length);
+  readonly completedCount = computed(() => this.allTasks().filter((t) => t.completed).length);
 
- constructor() {
-    // Save to localStorage whenever the task list changes.
-    effect(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.tasks()));
-    });
+  addTask(input: NewTask): void {
+    this.store.add(input);
   }
 
-  addTask(input: Omit<Task, 'id' | 'completed' | 'createdAt' | 'updatedAt'>): void {
-    const now = new Date().toISOString();
-    const task: Task = {
-      ...input,
-      id: crypto.randomUUID(),
-      title: input.title.trim(),
-      completed: false,
-      createdAt: now,
-      updatedAt: now,
-    };
-    this.tasks.update((list) => [...list, task]);
-  }
-
-  updateTask(id: string, changes: Partial<Omit<Task, 'id' | 'createdAt'>>): void {
-    this.tasks.update((list) =>
-      list.map((t) =>
-        t.id === id ? { ...t, ...changes, updatedAt: new Date().toISOString() } : t
-      )
-    );
-  }
-
-  countByCategory(category: string): number {
-    return this.tasks().filter((t) => t.category === category).length;
-  }
-
-  reassignCategory(from: string, to: string): void {
-    this.tasks.update((list) =>
-      list.map((t) => (t.category === from ? { ...t, category: to } : t)),
-    );
+  updateTask(id: string, changes: TaskChanges): void {
+    this.store.update(id, changes);
   }
 
   deleteTask(id: string): void {
-    this.tasks.update((list) => list.filter((t) => t.id !== id));
+    this.store.remove(id);
   }
 
   toggleComplete(id: string): void {
-    this.tasks.update((list) =>
-      list.map((t) =>
-        t.id === id
-          ? { ...t, completed: !t.completed, updatedAt: new Date().toISOString() }
-          : t
-      )
-    );
+    this.store.toggle(id);
   }
 
-  private loadFromStorage(): Task[] {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as Task[]) : [];
-    } catch {
-      return [];
-    }
+  countByCategory(category: string): number {
+    return this.allTasks().filter((t) => t.category === category).length;
+  }
+
+  reassignCategory(from: string, to: string): void {
+    this.store.reassignCategory(from, to);
   }
 }
