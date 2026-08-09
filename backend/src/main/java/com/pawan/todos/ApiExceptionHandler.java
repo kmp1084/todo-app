@@ -1,6 +1,7 @@
 package com.pawan.todos;
 
 import com.pawan.todos.task.TaskNotFoundException;
+import com.pawan.todos.user.EmailAlreadyUsedException;
 import org.springframework.http.*;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,5 +42,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {   // â
         body.setProperty("errors", errors);
 
         return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);  // â‘¡
+    }
+
+    @ExceptionHandler(EmailAlreadyUsedException.class)
+    public ResponseEntity<ProblemDetail> handleEmailTaken(EmailAlreadyUsedException ex) {
+        ProblemDetail body = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        body.setTitle("Email already registered");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 }
