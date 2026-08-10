@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/tasks/**").permitAll()   // Module 3 locks this
                         .requestMatchers("/api/ping", "/api/health").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/error").permitAll() //permit errors through
                         .anyRequest().authenticated())
                 .build();
     }
