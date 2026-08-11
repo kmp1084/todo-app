@@ -18,6 +18,10 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+
 @Configuration
 public class SecurityConfig {
 
@@ -25,16 +29,17 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())                       // ①
-                .cors(Customizer.withDefaults())                    // ②
+                .cors(Customizer.withDefaults())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(s ->
                         s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))   // ③
                 .headers(h -> h.frameOptions(f -> f.sameOrigin()))  // ④
                 .authorizeHttpRequests(auth -> auth                 // ⑤ order matters
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/tasks/**").permitAll()   // Module 3 locks this
                         .requestMatchers("/api/ping", "/api/health").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/error").permitAll() //permit errors through
+                        .requestMatchers("/api/tasks/**").authenticated()
                         .anyRequest().authenticated())
                 .build();
     }
@@ -54,5 +59,14 @@ public class SecurityConfig {
         return NimbusJwtEncoder.withSecretKey(jwtSecretKey)
                 .algorithm(MacAlgorithm.HS256)
                 .build();
+    }
+
+    @Bean
+    JwtDecoder jwtDecoder(SecretKey jwtSecretKey, @Value("${app.jwt.issuer}") String issuer) {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtSecretKey)
+                .macAlgorithm(MacAlgorithm.HS256)
+                .build();
+        decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(issuer));
+        return decoder;
     }
 }
