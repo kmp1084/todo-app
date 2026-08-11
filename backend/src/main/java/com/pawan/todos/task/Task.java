@@ -3,6 +3,7 @@ package com.pawan.todos.task;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
+import com.pawan.todos.user.User;
 
 @Entity
 @Table(name = "tasks")
@@ -36,16 +37,21 @@ public class Task {
     @Column(nullable = false)
     private Instant updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "owner_id", nullable = false, updatable = false)
+    private User owner;
+
     protected Task() { }                // required by JPA - do not delete
 
     public Task(String title, String description, Priority priority,
-                String category, Instant dueDate) {
+                String category, Instant dueDate, User owner) {
         this.title = title;
         this.description = description;
         this.priority = priority;
         this.category = category;
         this.dueDate = dueDate;
         this.completed = false;
+        this.owner = owner;
     }
 
     @PrePersist
@@ -131,5 +137,9 @@ public class Task {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public User getOwner() {
+        return owner;
     }
 }

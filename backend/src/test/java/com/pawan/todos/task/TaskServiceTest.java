@@ -1,5 +1,7 @@
 package com.pawan.todos.task;
 
+import com.pawan.todos.user.User;
+import com.pawan.todos.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,36 +16,43 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)          // ① wires up @Mock / @InjectMocks
+@ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
-    @Mock                                     // ② a fake TaskRepository
+    @Mock
     private TaskRepository repository;
 
-    @InjectMocks                              // ③ real TaskService, mock passed to its constructor
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
     private TaskService service;
+
+    private final UUID ownerId = UUID.randomUUID();
 
     @Test
     void createMapsRequestFieldsAndDefaultsCompletedToFalse() {
+        when(userRepository.getReferenceById(ownerId))
+                .thenReturn(new User("a@example.com", "hash"));
         when(repository.save(any(Task.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));   // ④ echo it back
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         TaskRequest request = new TaskRequest("Buy milk", "2 percent",
-                Priority.HIGH, "Shopping", null, null);   // ⑤ completed = null
+                Priority.HIGH, "Shopping", null, null);
 
-        TaskResponse response = service.create(request);
+        TaskResponse response = service.create(ownerId, request);
 
         assertThat(response.title()).isEqualTo("Buy milk");
         assertThat(response.priority()).isEqualTo(Priority.HIGH);
-        assertThat(response.completed()).isFalse();       // Boolean.TRUE.equals(null) → false
+        assertThat(response.completed()).isFalse();
     }
 
     @Test
-    void findByIdThrowsWhenTheTaskDoesNotExist() {
+    void findByIdThrowsWhenTheTaskIsNotOwnedByTheUser() {
         UUID id = UUID.randomUUID();
-        when(repository.findById(id)).thenReturn(Optional.empty());
+        when(repository.findByIdAndOwnerId(id, ownerId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.findById(id))
+        assertThatThrownBy(() -> service.findById(ownerId, id))
                 .isInstanceOf(TaskNotFoundException.class)
                 .hasMessageContaining(id.toString());
     }

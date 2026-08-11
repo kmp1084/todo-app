@@ -9,6 +9,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+
 @RestController
 @RequestMapping("/api/tasks")                  // ① base path for the whole class
 public class TaskController {
@@ -19,33 +22,39 @@ public class TaskController {
         this.service = service;
     }
 
-    @GetMapping                                // ② GET /api/tasks
-    public List<TaskResponse> list() {
-        return service.findAll();
+    @GetMapping
+    public List<TaskResponse> list(@AuthenticationPrincipal Jwt jwt) {
+        return service.findAll(ownerId(jwt));
     }
 
     @GetMapping("/{id}")
-    public TaskResponse one(@PathVariable UUID id) {      // ③ String → UUID conversion
-        return service.findById(id);
+    public TaskResponse one(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {      // ③ String → UUID conversion
+        return service.findById(ownerId(jwt), id);
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponse> create(@Valid @RequestBody TaskRequest request) {
-        TaskResponse created = service.create(request);
+    public ResponseEntity<TaskResponse> create(@AuthenticationPrincipal Jwt jwt,
+                                               @Valid @RequestBody TaskRequest request) {
+        TaskResponse created = service.create(ownerId(jwt), request);
         return ResponseEntity
                 .created(URI.create("/api/tasks/" + created.id()))   // ④ 201 + Location
                 .body(created);
     }
 
     @PutMapping("/{id}")
-    public TaskResponse update(@PathVariable UUID id,
+    public TaskResponse update(@AuthenticationPrincipal Jwt jwt,
+                               @PathVariable UUID id,
                               @Valid @RequestBody TaskRequest request) {
-        return service.update(id, request);
+        return service.update(ownerId(jwt), id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)     // ⑤ 204, empty body
-    public void delete(@PathVariable UUID id) {
-        service.delete(id);
+    public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        service.delete(ownerId(jwt), id);
+    }
+
+    private static UUID ownerId(Jwt jwt) {
+        return UUID.fromString(jwt.getSubject());
     }
 }
