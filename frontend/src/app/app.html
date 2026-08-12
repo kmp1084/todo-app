@@ -1,6 +1,8 @@
 <mat-toolbar class="app-toolbar" role="banner">
-  <mat-icon aria-hidden="true">checklist</mat-icon>
-  <h1 class="app-title">{{ title() }}</h1>
+  <a routerLink="/" class="app-home-link">
+    <mat-icon aria-hidden="true">checklist</mat-icon>
+    <h1 class="app-title">{{ title() }}</h1>
+  </a>
   <span class="spacer"></span>
     <span class="spacer"></span>
     @if (isLoggedIn()) {
@@ -9,9 +11,11 @@
     } @else {
     <a matButton routerLink="/login">Log in</a>
     }
-  <button matIconButton aria-label="Manage categories" (click)="manageCategories()">
-    <mat-icon>settings</mat-icon>
-  </button>
+    @if (showCategoryButton()) {
+      <button matIconButton aria-label="Manage categories" (click)="manageCategories()">
+        <mat-icon>settings</mat-icon>
+      </button>
+    }
 </mat-toolbar>
 
 <main class="content">

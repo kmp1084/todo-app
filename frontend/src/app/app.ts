@@ -3,12 +3,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { TaskForm } from './components/task-form/task-form';
-import { TaskList } from './components/task-list/task-list';
 import { ManageCategoriesDialog } from './components/manage-categories-dialog/manage-categories-dialog';
 import { TaskService } from './services/task.service';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
+
+function isAuthRoute(url: string): boolean {
+  return url.startsWith('/login') || url.startsWith('/register');
+}
 
 @Component({
   selector: 'app-root',
@@ -21,7 +25,13 @@ export class App {
   private readonly taskService = inject(TaskService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  
+  protected readonly showCategoryButton = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => !isAuthRoute(e.urlAfterRedirects)),
+    ),
+    { initialValue: true },
+  );
   protected readonly title = signal('Todos');
   protected readonly error = this.taskService.error;
   protected readonly isLoggedIn = this.auth.isLoggedIn;
