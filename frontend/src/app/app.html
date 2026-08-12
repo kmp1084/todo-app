@@ -2,6 +2,13 @@
   <mat-icon aria-hidden="true">checklist</mat-icon>
   <h1 class="app-title">{{ title() }}</h1>
   <span class="spacer"></span>
+    <span class="spacer"></span>
+    @if (isLoggedIn()) {
+    <span class="user-email">{{ userEmail() }}</span>
+    <button matButton (click)="logout()">Log out</button>
+    } @else {
+    <a matButton routerLink="/login">Log in</a>
+    }
   <button matIconButton aria-label="Manage categories" (click)="manageCategories()">
     <mat-icon>settings</mat-icon>
   </button>

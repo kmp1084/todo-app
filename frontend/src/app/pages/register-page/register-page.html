@@ -1,0 +1,32 @@
+<h2 class="section-label">Create an account</h2>
+
+@if (error(); as message) {
+  <p class="auth-error" role="alert">{{ message }}</p>
+}
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput type="email" formControlName="email" [errorStateMatcher]="errorMatcher" />
+    @if (form.controls.email.hasError('required')) {
+      <mat-error>Email is required</mat-error>
+    } @else if (form.controls.email.hasError('email')) {
+      <mat-error>Enter a valid email address</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input matInput type="password" formControlName="password" [errorStateMatcher]="errorMatcher" />
+    @if (form.controls.password.hasError('required')) {
+      <mat-error>Password is required</mat-error>
+    } @else if (form.controls.password.hasError('minlength')) {
+      <mat-error>Password must be at least 8 characters</mat-error>
+    }
+  </mat-form-field>
+
+  <div class="auth-actions">
+    <a routerLink="/login">I already have an account</a>
+    <button matButton="filled" type="submit" [disabled]="submitting()">Create account</button>
+  </div>
+</form>
