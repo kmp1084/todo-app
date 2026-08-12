@@ -7,10 +7,11 @@ import { TaskForm } from './components/task-form/task-form';
 import { TaskList } from './components/task-list/task-list';
 import { ManageCategoriesDialog } from './components/manage-categories-dialog/manage-categories-dialog';
 import { TaskService } from './services/task.service';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [MatToolbarModule, MatIconModule, MatButtonModule, TaskForm, TaskList],
+  imports: [MatToolbarModule, MatIconModule, MatButtonModule, TaskForm, TaskList, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
