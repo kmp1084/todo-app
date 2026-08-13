@@ -33,7 +33,7 @@ export class HttpTaskStore implements TaskStore {
     this.errorSignal.set(null);
   }
 
-  private reload(): void {
+  reload(): void {
     this.run(this.http.get<Task[]>(this.baseUrl), 'Loading tasks',
       (tasks) => this.tasksSignal.set(tasks));
   }

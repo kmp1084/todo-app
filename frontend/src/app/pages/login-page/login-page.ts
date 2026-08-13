@@ -7,6 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../services/auth.service';
 import { SubmittedErrorStateMatcher } from '../../shared/submitted-error-state-matcher';
+import { switchMap } from 'rxjs';
+import { GuestMigrationService } from '../../services/guest-migration.service';
 
 @Component({
   selector: 'app-login-page',
@@ -18,6 +20,7 @@ export class LoginPage {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly migration = inject(GuestMigrationService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -36,7 +39,9 @@ export class LoginPage {
     this.submitting.set(true);
 
     const { email, password } = this.form.getRawValue();
-    this.auth.login(email, password).subscribe({
+    this.auth.login(email, password).pipe(
+      switchMap(() => this.migration.run()),
+    ).subscribe({
       next: () => this.router.navigateByUrl('/'),
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
