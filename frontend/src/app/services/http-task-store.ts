@@ -1,14 +1,16 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Service, inject, signal } from '@angular/core';
+import { Service, inject, signal, effect } from '@angular/core';
 import { Observable } from 'rxjs';
 import { NewTask, Task, TaskChanges } from '../models/task';
 import { environment } from '../../environments/environment';
 import type { TaskStore } from './task-store';
+import { AuthService } from './auth.service';
 
 @Service()
 export class HttpTaskStore implements TaskStore {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/tasks`;
+  private readonly auth = inject(AuthService);
 
   private readonly tasksSignal = signal<Task[]>([]);
   readonly tasks = this.tasksSignal.asReadonly();
@@ -17,7 +19,14 @@ export class HttpTaskStore implements TaskStore {
   readonly error = this.errorSignal.asReadonly();
 
   constructor() {
-    this.reload();
+    effect(() => {
+      if (this.auth.isLoggedIn()) {
+        this.reload();                    // fresh data for whoever just signed in
+      } else {
+        this.tasksSignal.set([]);         // drop the previous user's data
+        this.errorSignal.set(null);
+      }
+    });
   }
 
   clearError(): void {
