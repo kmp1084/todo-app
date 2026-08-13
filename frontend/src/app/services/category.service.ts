@@ -1,4 +1,4 @@
-import { Service, inject, signal, effect} from '@angular/core';
+import { Service, computed, effect, inject, signal } from '@angular/core';
 import { DEFAULT_CATEGORIES } from '../models/task';
 import { TaskService } from './task.service';
 
@@ -8,24 +8,29 @@ export const CATEGORY_STORAGE_KEY = 'todos.categories';
 export class CategoryService {
   private readonly taskService = inject(TaskService);
 
-  private readonly categoriesSignal = signal<string[]>(this.loadFromStorage());
-  readonly categories = this.categoriesSignal.asReadonly();
+  /** Presets plus categories explicitly created on this device. */
+  private readonly managed = signal<string[]>(this.loadFromStorage());
+
+  /** What the UI sees: the managed list, plus any category a loaded task uses. */
+  readonly categories = computed(() => {
+    const result = [...this.managed()];
+    const seen = new Set(result.map((c) => c.toLowerCase()));
+
+    for (const task of this.taskService.allTasks()) {
+      const name = task.category?.trim();
+      if (name && !seen.has(name.toLowerCase())) {
+        seen.add(name.toLowerCase());
+        result.push(name);
+      }
+    }
+    return result;
+  });
 
   constructor() {
     effect(() => {
-      const custom = this.categoriesSignal().filter((c) => !this.isPreset(c));
+      const custom = this.managed().filter((c) => !this.isPreset(c));
       localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(custom));
     });
-  }
-
-  private loadFromStorage(): string[] {
-    try {
-      const raw = localStorage.getItem(CATEGORY_STORAGE_KEY);
-      const custom = raw ? (JSON.parse(raw) as string[]) : [];
-      return [...DEFAULT_CATEGORIES, ...custom];                                  // ②
-    } catch {
-      return [...DEFAULT_CATEGORIES];
-    }
   }
 
   isPreset(name: string): boolean {
@@ -34,7 +39,7 @@ export class CategoryService {
 
   private exists(name: string): boolean {
     const target = name.trim().toLowerCase();
-    return this.categoriesSignal().some((c) => c.toLowerCase() === target);
+    return this.categories().some((c) => c.toLowerCase() === target);
   }
 
   addCategory(name: string): boolean {
@@ -42,7 +47,7 @@ export class CategoryService {
     if (!trimmed || this.exists(trimmed)) {
       return false;
     }
-    this.categoriesSignal.update((list) => [...list, trimmed]);
+    this.managed.update((list) => [...list, trimmed]);
     return true;
   }
 
@@ -60,9 +65,7 @@ export class CategoryService {
       return false;
     }
 
-    this.categoriesSignal.update((list) =>
-      list.map((c) => (c === oldName ? trimmed : c)),
-    );
+    this.managed.update((list) => list.map((c) => (c === oldName ? trimmed : c)));
     this.taskService.reassignCategory(oldName, trimmed);
     return true;
   }
@@ -77,7 +80,17 @@ export class CategoryService {
       return { deleted: false, inUse };
     }
 
-    this.categoriesSignal.update((list) => list.filter((c) => c !== name));
+    this.managed.update((list) => list.filter((c) => c !== name));
     return { deleted: true, inUse: 0 };
+  }
+
+  private loadFromStorage(): string[] {
+    try {
+      const raw = localStorage.getItem(CATEGORY_STORAGE_KEY);
+      const custom = raw ? (JSON.parse(raw) as string[]) : [];
+      return [...DEFAULT_CATEGORIES, ...custom];
+    } catch {
+      return [...DEFAULT_CATEGORIES];
+    }
   }
 }
