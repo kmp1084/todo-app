@@ -84,15 +84,35 @@ Each phase below has a **Tests** line to keep this visible.
 > deserialise when the JSON omits it, so use `Boolean`; `@MockBean` is gone, replaced by
 > `@MockitoBean`; and `@WebMvcTest` / `@DataJpaTest` moved packages.
 
-## Phase 4 — Authentication
+## Phase 4 — Authentication  ✅ COMPLETE
 
-- [ ] `User` entity, register/login endpoints, BCrypt password hashing
-- [ ] JWT issuing + Spring Security filter for protected endpoints
-- [ ] Scope tasks to the owning user
-- [ ] Angular `AuthService` (signals) + login/register views + route guard
-- [ ] JWT HTTP interceptor
-- [ ] Guest → account task migration on first login (in scope for v1)
-- [ ] **Tests:** auth endpoints (register/login, bad credentials), migration flow, route guard
+- [x] `User` entity, register/login endpoints, BCrypt password hashing
+  - email normalised and unique; only a 60-char hash is ever stored
+  - duplicate registration → 409; both login failures return an identical 401
+- [x] JWT issuing + Spring Security filter for protected endpoints
+  - Spring Security 7 with `oauth2ResourceServer`, HMAC-signed tokens, 60-minute expiry
+  - signature, `exp`, `nbf` and `iss` all validated on every request
+- [x] Scope tasks to the owning user
+  - `Task` gained a `@ManyToOne` owner; **every** repository query is owner-scoped
+  - another user's task returns 404, never 403 — no resource enumeration
+- [x] Angular `AuthService` (signals) + login/register views + route guard
+  - session survives a refresh and is discarded when expired
+  - guard is the inverse of the usual one: `/` stays open for guests, signed-in
+    users are kept off `/login` and `/register`
+- [x] JWT HTTP interceptor
+  - attaches the token to API requests only; a 401 signs you out **only if a token
+    was actually sent**, so guest mode is unaffected
+- [x] Guest → account task migration on sign-in
+  - confirmed via a dialog; categories merged first, then tasks posted one at a time,
+    each removed from localStorage only after its POST succeeds
+- [x] Task store follows auth state — guests use localStorage, signed-in users the API
+- [x] Categories are per-account, and a user's list carries into guest mode on sign-out
+- [x] **Tests:** 24 backend (unit, JPA slice, web slice, full security chain) and
+  19 frontend spec files — auth service, interceptor, guard, migration, stores
+
+> **Known limitation:** categories live in `localStorage` per account, not on the server.
+> A custom category with no tasks won't appear on a machine the user has never signed in
+> on. Closing that needs a `/api/categories` endpoint.
 
 ## Phase 5 — Full-stack deploy & CI/CD
 
