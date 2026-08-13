@@ -25,14 +25,23 @@ describe('HttpTaskStore', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
+    localStorage.setItem('todos.auth.token', 'test-token');
+    localStorage.setItem('todos.auth.email', 'test@example.com');
+    localStorage.setItem('todos.auth.expiresAt',
+      new Date(Date.now() + 3_600_000).toISOString());
+
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     httpMock = TestBed.inject(HttpTestingController);
-    store = TestBed.inject(HttpTaskStore); // constructor fires the initial GET
+    store = TestBed.inject(HttpTaskStore);
+    TestBed.tick();                       // let the auth effect run
   });
 
-  afterEach(() => httpMock.verify());
+  afterEach(() => {
+    httpMock.verify();
+    localStorage.clear();
+  });
 
   it('loads tasks on creation', () => {
     const req = httpMock.expectOne(baseUrl);
