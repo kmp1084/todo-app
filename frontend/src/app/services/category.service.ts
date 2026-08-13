@@ -1,13 +1,32 @@
-import { Service, inject, signal } from '@angular/core';
+import { Service, inject, signal, effect} from '@angular/core';
 import { DEFAULT_CATEGORIES } from '../models/task';
 import { TaskService } from './task.service';
+
+export const CATEGORY_STORAGE_KEY = 'todos.categories';
 
 @Service()
 export class CategoryService {
   private readonly taskService = inject(TaskService);
 
-  private readonly categoriesSignal = signal<string[]>([...DEFAULT_CATEGORIES]);
+  private readonly categoriesSignal = signal<string[]>(this.loadFromStorage());
   readonly categories = this.categoriesSignal.asReadonly();
+
+  constructor() {
+    effect(() => {
+      const custom = this.categoriesSignal().filter((c) => !this.isPreset(c));
+      localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(custom));
+    });
+  }
+
+  private loadFromStorage(): string[] {
+    try {
+      const raw = localStorage.getItem(CATEGORY_STORAGE_KEY);
+      const custom = raw ? (JSON.parse(raw) as string[]) : [];
+      return [...DEFAULT_CATEGORIES, ...custom];                                  // ②
+    } catch {
+      return [...DEFAULT_CATEGORIES];
+    }
+  }
 
   isPreset(name: string): boolean {
     return DEFAULT_CATEGORIES.some((c) => c.toLowerCase() === name.toLowerCase());
