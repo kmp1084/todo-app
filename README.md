@@ -10,7 +10,7 @@ _(frontend auto-deploys from `main` via Netlify on every push; the backend is no
 
 | Folder        | Contents                                                        |
 | ------------- | --------------------------------------------------------------- |
-| `docs/`       | Requirements, design, and roadmap (planning artifacts)          |
+| `docs/`       | Requirements, design, roadmap, and [deployment](docs/deploy.md)  |
 | `wireframes/` | Screen mockups                                                  |
 | `frontend/`   | Angular application                                             |
 | `backend/`    | Spring Boot REST API                                            |
