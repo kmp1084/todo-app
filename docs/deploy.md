@@ -64,14 +64,18 @@ gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregi
 Set on the Cloud Run service, read by the `prod` Spring profile. None have defaults —
 a missing value fails startup rather than silently using a development fallback.
 
-| Variable | Value |
-|----------|-------|
-| `SPRING_PROFILES_ACTIVE` | `prod` |
-| `DATABASE_URL` | `jdbc:postgresql://<neon-host>/neondb?sslmode=require` |
-| `DATABASE_USERNAME` | `neondb_owner` |
-| `DATABASE_PASSWORD` | *(Neon console → Roles)* |
-| `CORS_ALLOWED_ORIGINS` | `https://scintillating-brioche-62b3c2.netlify.app` |
-| `JWT_SECRET` | *(generate with `openssl rand -base64 48`)* |
+| Variable | Source | Value |
+|----------|--------|-------|
+| `SPRING_PROFILES_ACTIVE` | plain | `prod` |
+| `DATABASE_URL` | plain | `jdbc:postgresql://<neon-host>/neondb?sslmode=require` |
+| `DATABASE_USERNAME` | plain | `neondb_owner` |
+| `CORS_ALLOWED_ORIGINS` | plain | `https://scintillating-brioche-62b3c2.netlify.app` |
+| `DATABASE_PASSWORD` | **Secret Manager** | `db-password:latest` |
+| `JWT_SECRET` | **Secret Manager** | `jwt-secret:latest` |
+
+The two credentials are Secret Manager references, not literals — the service
+configuration names a secret and the secret's own IAM policy controls who may read it.
+`DATABASE_URL` stays a plain variable: a hostname is not a credential.
 
 Notes on `DATABASE_URL`:
 
@@ -92,9 +96,8 @@ cd backend && gcloud run deploy todos-api \
   --set-env-vars "SPRING_PROFILES_ACTIVE=prod" \
   --set-env-vars "DATABASE_URL=jdbc:postgresql://<neon-host>/neondb?sslmode=require" \
   --set-env-vars "DATABASE_USERNAME=neondb_owner" \
-  --set-env-vars "DATABASE_PASSWORD=<password>" \
   --set-env-vars "CORS_ALLOWED_ORIGINS=https://scintillating-brioche-62b3c2.netlify.app" \
-  --set-env-vars "JWT_SECRET=<generated-secret>"
+  --set-secrets "JWT_SECRET=jwt-secret:latest,DATABASE_PASSWORD=db-password:latest"
 ```
 
 Why these flags:
@@ -135,6 +138,37 @@ curl -s -i -X OPTIONS $API/api/tasks \
   -H "Access-Control-Request-Method: GET" | head -8                    # 200 + CORS headers
 ```
 
+## Secrets
+
+Stored in Secret Manager; the Cloud Run runtime service account is granted
+`roles/secretmanager.secretAccessor` on each one individually.
+
+Creating a secret — **use `printf`, never `echo`**. `echo` appends a newline, which is
+stored as part of the value and makes a database password fail to authenticate with a
+message that says nothing about whitespace:
+
+```bash
+printf '%s' 'THE-VALUE' | gcloud secrets create SECRET_NAME --data-file=-
+
+gcloud secrets add-iam-policy-binding SECRET_NAME \
+  --member="serviceAccount:304973076484-compute@developer.gserviceaccount.com" \
+  --role="roles/secretmanager.secretAccessor"
+```
+
+`--data-file=-` reads stdin so the value never appears as a command argument, where it
+would land in shell history and process listings.
+
+Rotating a value — add a version; `:latest` resolves at instance startup, so the next
+cold start picks it up with no redeploy:
+
+```bash
+printf '%s' 'NEW-VALUE' | gcloud secrets versions add SECRET_NAME --data-file=-
+```
+
+Existing warm instances keep the old value until they're replaced. Force it with
+`gcloud run services update todos-api --update-env-vars "ROTATED_AT=$(date +%s)"`, which
+creates a new revision.
+
 ## Rolling back
 
 Every deploy creates an immutable revision; the previous one still exists.
@@ -155,8 +189,10 @@ https://console.cloud.google.com/run/detail/us-west1/todos-api/logs?project=todo
 
 ## Known limitations
 
-- **Secrets are plain environment variables**, visible to anyone with console access to the
-  project. The production-correct approach is Secret Manager with `--set-secrets`.
+- **Older Cloud Run revisions still hold the pre-Secret-Manager values** as plaintext
+  environment variables. Deleting those revisions, or rotating both credentials, is what
+  actually removes the exposure — switching to Secret Manager only protects values from
+  that point forward.
 - **~13 second cold start** after idle (Cloud Run JVM start + Neon wake). Removable with
   `--min-instances=1`, at roughly $10–15/month.
 - **Neon free tier** autoscales `0.25 ↔ 2 CU`; the ceiling is capped at 0.25 CU so the
