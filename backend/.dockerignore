@@ -1,0 +1,8 @@
+target/
+data/
+.git/
+.idea/
+*.iml
+.DS_Store
+HELP.md
+docker-compose.yml
