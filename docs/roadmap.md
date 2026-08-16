@@ -7,12 +7,15 @@ before moving on.
 
 Testing is **not** a single phase between build and deploy — it happens in two places:
 
-1. **During each build phase:** we write unit tests (`*.spec.ts`) alongside the code —
-   `TaskService` logic, components, guards, the auth flow. Run continuously while building.
-2. **As a CI gate before deploy (Phase 5):** GitHub Actions runs `lint → test → build`,
-   and only deploys if everything is green.
+1. **During each build phase:** tests written alongside the code — service logic,
+   components, guards, the auth flow. Run continuously while building.
+2. **As a CI gate before deploy:** GitHub Actions runs both suites on every push and pull
+   request, and only deploys the API if everything is green.
 
 Each phase below has a **Tests** line to keep this visible.
+
+> **As built:** the pipeline is `test → build → deploy`. No linter was configured for
+> either half, so there is no lint stage — recorded as a known gap in Phase 5.
 
 ## Phase 0 — Planning & scaffolding  ✅ COMPLETE
 
@@ -49,7 +52,7 @@ Each phase below has a **Tests** line to keep this visible.
 - [x] Polish + accessibility pass (h1 page heading, banner landmark; probe-verified)
 - [x] **Tests:** localStorage save/load covered (`TestBed.tick()` to flush the effect)
 - [x] Deploy frontend to Netlify (auto-deploy from `main`; netlify.toml, Node 22 pinned)
-- [x] Live URL in README — https://scintillating-brioche-62b3c2.netlify.app/
+- [x] Live URL in README — https://pawan-todos.netlify.app/
 
 ## Phase 3 — Backend (tasks API)  ✅ COMPLETE
 
@@ -114,10 +117,30 @@ Each phase below has a **Tests** line to keep this visible.
 > A custom category with no tasks won't appear on a machine the user has never signed in
 > on. Closing that needs a `/api/categories` endpoint.
 
-## Phase 5 — Full-stack deploy & CI/CD
+## Phase 5 — Full-stack deploy & CI/CD  ✅ COMPLETE
 
-- [ ] Deploy backend (AWS / Render / Railway)
-- [ ] Connect frontend to hosted backend
-- [ ] GitHub Actions pipeline: **lint → test → build → deploy** (deploy only if tests pass)
-- [ ] (Optional) end-to-end (e2e) smoke test of the deployed app
-- [ ] (Optional) PostgreSQL
+See [deploy.md](deploy.md) for the full procedure.
+
+- [x] Externalised configuration — Spring profiles (`dev` / `pg` / `prod`), every production
+  value from an environment variable with **no defaults**, so missing config fails startup
+  rather than silently using a development secret
+- [x] **PostgreSQL** — local via docker-compose, hosted on **Neon** (free tier, Oregon, to
+  match the Cloud Run region)
+- [x] **Flyway migrations** replacing `ddl-auto` — Hibernate now runs `validate`, so a schema
+  change without a migration is a startup failure. `V1__init.sql` also adds an index on
+  `tasks.owner_id`, which Postgres does not create for foreign keys
+- [x] Multi-stage **Dockerfile** — JDK to build, JRE to run, non-root user, and
+  `-XX:MaxRAMPercentage=75` so the JVM sizes its heap to the container rather than the host
+- [x] Deploy backend — **Google Cloud Run** (`us-west1`), scales to zero
+- [x] **Secret Manager** for the JWT secret and database password, with the runtime service
+  account granted read access per secret
+- [x] Connect frontend to the hosted API, with an explanatory message during the free-tier
+  cold start rather than a bare spinner
+- [x] GitHub Actions: **test → build → deploy** (deploy only on `main`, only if both suites
+  pass), authenticating with **Workload Identity Federation** — no service account key stored
+- [x] Artifact Registry cleanup policy so images don't accumulate
+- [ ] lint — no linter configured for either half; would be its own small project
+- [ ] (Optional) end-to-end smoke test against the deployed app
+
+> **Free-tier trade-off:** both Cloud Run and Neon scale to zero, so the first request after
+> idle takes ~13 seconds. Guests never call the API, so only signing in is affected.

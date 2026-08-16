@@ -9,8 +9,8 @@ How this app is hosted, and how to deploy a change.
 
 | Piece | Where | Notes |
 |-------|-------|-------|
-| Frontend (Angular) | **Netlify** — https://scintillating-brioche-62b3c2.netlify.app | auto-deploys on push to `main` |
-| Backend (Spring Boot) | **Google Cloud Run** — https://todos-api-304973076484.us-west1.run.app | deployed manually (see below) |
+| Frontend (Angular) | **Netlify** — https://pawan-todos.netlify.app | auto-deploys on push to `main` |
+| Backend (Spring Boot) | **Google Cloud Run** — https://todos-api-304973076484.us-west1.run.app | auto-deploys from CI after tests pass |
 | Database (PostgreSQL 17) | **Neon** — `<neon-endpoint>.us-west-2.aws.neon.tech`, database `neondb` | free tier |
 
 Cloud Run is in `us-west1` (Oregon) and Neon in AWS `us-west-2` (Oregon) so the app and
@@ -118,7 +118,7 @@ a missing value fails startup rather than silently using a development fallback.
 | `SPRING_PROFILES_ACTIVE` | plain | `prod` |
 | `DATABASE_URL` | plain | `jdbc:postgresql://<neon-host>/neondb?sslmode=require` |
 | `DATABASE_USERNAME` | plain | `neondb_owner` |
-| `CORS_ALLOWED_ORIGINS` | plain | `https://scintillating-brioche-62b3c2.netlify.app` |
+| `CORS_ALLOWED_ORIGINS` | plain | `https://pawan-todos.netlify.app` |
 | `DATABASE_PASSWORD` | **Secret Manager** | `db-password:latest` |
 | `JWT_SECRET` | **Secret Manager** | `jwt-secret:latest` |
 
@@ -145,7 +145,7 @@ cd backend && gcloud run deploy todos-api \
   --set-env-vars "SPRING_PROFILES_ACTIVE=prod" \
   --set-env-vars "DATABASE_URL=jdbc:postgresql://<neon-host>/neondb?sslmode=require" \
   --set-env-vars "DATABASE_USERNAME=neondb_owner" \
-  --set-env-vars "CORS_ALLOWED_ORIGINS=https://scintillating-brioche-62b3c2.netlify.app" \
+  --set-env-vars "CORS_ALLOWED_ORIGINS=https://pawan-todos.netlify.app" \
   --set-secrets "JWT_SECRET=jwt-secret:latest,DATABASE_PASSWORD=db-password:latest"
 ```
 
@@ -214,7 +214,7 @@ curl -s -o /dev/null -w "ping  -> %{http_code}\n" $API/api/ping        # 200
 curl -s -o /dev/null -w "tasks -> %{http_code}\n" $API/api/tasks       # 401
 
 curl -s -i -X OPTIONS $API/api/tasks \
-  -H "Origin: https://scintillating-brioche-62b3c2.netlify.app" \
+  -H "Origin: https://pawan-todos.netlify.app" \
   -H "Access-Control-Request-Method: GET" | head -8                    # 200 + CORS headers
 ```
 

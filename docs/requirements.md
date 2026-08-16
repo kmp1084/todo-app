@@ -1,6 +1,7 @@
 # Requirements — Todos
 
-> **Status:** Draft for review. Edit freely — this is your product spec.
+> **Status:** Implemented. Every functional requirement below is built and live. Two details
+> ended up differing from the original wording — see **As built** at the end.
 
 ## 1. Vision
 
@@ -114,3 +115,29 @@ across devices.
 - Password reset via email
 
 _These are candidate future enhancements once the core app is solid._
+
+## 6. As built — where implementation differs from the spec
+
+Two places where the shipped behaviour departs from the wording above, both deliberate.
+
+**FR-11 AC7 — migration asks rather than happening automatically.** The spec says guest data
+"is migrated" on first sign-in with local storage cleared afterwards. As built, the user is
+**asked** ("You have N tasks created before you signed in — add them to your account?"), and
+declining is non-destructive: the tasks stay in local storage and the offer repeats next
+time. On a shared machine, silently absorbing whatever guest tasks are present into the
+account someone just signed into is surprising, and no dialog answer should be able to lose
+data. It also runs whenever guest tasks exist rather than only the first time, which is
+simpler than tracking a "migrated" flag and avoids stranding tasks made in a later guest
+session.
+
+**§2 — categories don't follow you across devices; tasks do.** "Retrievable from any device"
+holds for tasks, which live in the database. Categories are stored per account in the
+browser, because no `/api/categories` endpoint was built — the backend only knows a
+category as a string on each task. In practice a category is recovered on a new device as
+soon as a task using it loads, so the gap is narrow: **a custom category with no tasks won't
+appear on a machine you've never signed in on.** Closing it properly needs a categories
+endpoint.
+
+Everything else — FR-1 through FR-12 and the non-functional requirements — is implemented as
+written. See [design.md](design.md) for the technical shape and
+[roadmap.md](roadmap.md) for the build order.
