@@ -9,10 +9,11 @@ import { AuthService } from '../../services/auth.service';
 import { SubmittedErrorStateMatcher } from '../../shared/submitted-error-state-matcher';
 import { switchMap } from 'rxjs';
 import { GuestMigrationService } from '../../services/guest-migration.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-login-page',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressBarModule],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })

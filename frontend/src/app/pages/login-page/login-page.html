@@ -22,7 +22,12 @@
       <mat-error>Password is required</mat-error>
     }
   </mat-form-field>
-
+  @if (submitting()) {
+    <mat-progress-bar mode="indeterminate" />
+    <p class="auth-hint">
+      Signing in… can take up to 15 seconds.
+    </p>
+  }
   <div class="auth-actions">
     <a routerLink="/register">Create an account</a>
     <button matButton="filled" type="submit" [disabled]="submitting()">Sign in</button>

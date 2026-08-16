@@ -4,7 +4,13 @@ A feature-rich task manager built as a full-SDLC learning project — an Angular
 and a Spring Boot REST API, deployed live.
 
 **🌐 Live demo:** https://scintillating-brioche-62b3c2.netlify.app/
-_(frontend auto-deploys from `main` via Netlify on every push; the backend is not yet hosted)_
+_(frontend auto-deploys from `main` via Netlify; API on Google Cloud Run — see
+[docs/deploy.md](docs/deploy.md))_
+
+> Browse it as a guest and everything works instantly — tasks live in `localStorage` and no
+> API call is made. **Signing in is the first request to the API, and it can take ~15
+> seconds**: both Cloud Run and the Neon database scale to zero on their free tiers, so the
+> first request after an idle period wakes them. It's fast after that.
 
 ## Repository structure
 
@@ -35,8 +41,9 @@ See [docs/roadmap.md](docs/roadmap.md). In short:
 4. ✅ Authentication (accounts, login, per-user tasks, guest → account migration)
 5. 🚧 Full-stack deploy + CI/CD ← _current_
 
-The frontend talks to the API when run locally (`npm start`) and falls back to
-localStorage in production builds, since the backend isn't hosted until Phase 5.
+Guests use `localStorage` and never call the API; signing in switches the task store to the
+hosted API, and guest tasks are offered for migration on first sign-in. Locally,
+`npm start` points at `http://localhost:8080`; production builds point at Cloud Run.
 
 ## Getting started
 
