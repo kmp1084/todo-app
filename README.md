@@ -1,5 +1,7 @@
 # Todos
 
+![CI](https://github.com/kmp1084/todo-app/actions/workflows/ci.yml/badge.svg)
+
 A feature-rich task manager built as a full-SDLC learning project — an Angular frontend
 and a Spring Boot REST API, deployed live.
 
