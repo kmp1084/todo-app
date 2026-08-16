@@ -56,8 +56,57 @@ gcloud billing projects describe todo-app-kmp1084     # expect billingEnabled: t
 Enable the required APIs:
 
 ```bash
-gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com \
+  artifactregistry.googleapis.com secretmanager.googleapis.com \
+  iamcredentials.googleapis.com sts.googleapis.com
 ```
+
+### Workload Identity Federation (for CI deploys)
+
+Lets GitHub Actions authenticate to Google **without a stored service account key**. GitHub
+issues each workflow run a short-lived OIDC token asserting which repository it came from;
+Google verifies that claim and exchanges it for an access token valid about an hour.
+
+```bash
+# A deploy identity, separate from the runtime service account the app uses
+gcloud iam service-accounts create github-deployer --display-name="GitHub Actions deployer"
+
+DEPLOYER=github-deployer@todo-app-kmp1084.iam.gserviceaccount.com
+
+for ROLE in roles/run.admin roles/iam.serviceAccountUser \
+            roles/cloudbuild.builds.editor roles/artifactregistry.writer roles/storage.admin
+do
+  gcloud projects add-iam-policy-binding todo-app-kmp1084 \
+    --member="serviceAccount:$DEPLOYER" --role="$ROLE" --condition=None
+done
+
+# Pool and GitHub OIDC provider
+gcloud iam workload-identity-pools create github --location=global --display-name="GitHub Actions"
+
+gcloud iam workload-identity-pools providers create-oidc github-provider \
+  --location=global --workload-identity-pool=github --display-name="GitHub" \
+  --issuer-uri="https://token.actions.githubusercontent.com" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
+  --attribute-condition="assertion.repository=='kmp1084/todo-app'"
+
+# Only this repository may impersonate the deployer
+gcloud iam service-accounts add-iam-policy-binding $DEPLOYER \
+  --role=roles/iam.workloadIdentityUser \
+  --member="principalSet://iam.googleapis.com/projects/304973076484/locations/global/workloadIdentityPools/github/attribute.repository/kmp1084/todo-app"
+```
+
+The `--attribute-condition` is the security boundary — without it the provider would trust
+tokens from *any* GitHub repository. Google refuses to create a provider without one.
+
+The workflow needs `permissions: id-token: write` on the deploy job, or the runner can't
+request the OIDC token. That omission is the most common cause of a confusing auth failure.
+
+Two distinct identities are in play, deliberately:
+
+| Identity | Used by | Can |
+|----------|---------|-----|
+| `github-deployer@…` | GitHub Actions | build and deploy; **cannot read secrets** |
+| `304973076484-compute@…` | the running app | read `jwt-secret` and `db-password` only |
 
 ## Environment variables
 
@@ -110,20 +159,51 @@ Why these flags:
 - `--max-instances 3` — with `hikari.maximum-pool-size=3`, caps the app at 9 database
   connections, safely inside Neon's free-tier limit
 
-## Redeploying a code or config change
+## Deploying a change
+
+**Pushes to `main` deploy automatically.** `.github/workflows/ci.yml` runs the backend and
+frontend test suites, and only if both pass does the `deploy` job run
+`gcloud run deploy todos-api --source .`. Pull requests run the tests but never deploy.
+
+GitHub authenticates to Google with **Workload Identity Federation** — no service account
+key is stored anywhere. See the one-time setup above.
 
 Anything under `src/main/resources` (including `application-*.properties` and Flyway
-migrations) is **baked into the jar at build time**, so a change there needs a rebuild.
-Environment variables are read at runtime and do not.
+migrations) is **baked into the jar at build time**, so a change there needs a rebuild —
+which a push gives you. Environment variables and secrets are read at runtime and don't.
+
+To deploy by hand (first-time setup, or if CI is unavailable):
 
 ```bash
-cd backend && gcloud run deploy todos-api --source .
+cd backend && gcloud run deploy todos-api --source . --region us-west1
 ```
 
 No `--set-env-vars` — unspecified settings are inherited from the current revision.
 
 > **Careful:** `--set-env-vars` **replaces the entire set**; anything not listed is deleted.
 > To change one value use `--update-env-vars "KEY=value"`.
+
+## Image cleanup
+
+Every deploy pushes a new image to Artifact Registry, so a cleanup policy caps the growth:
+
+```bash
+gcloud artifacts repositories set-cleanup-policies cloud-run-source-deploy \
+  --location=us-west1 --policy=backend/cleanup-policy.json
+```
+
+`backend/cleanup-policy.json` keeps the 3 most recent versions and deletes untagged images
+older than 7 days. Check what's stored with:
+
+```bash
+gcloud artifacts repositories describe cloud-run-source-deploy --location=us-west1
+gcloud artifacts docker images list \
+  us-west1-docker.pkg.dev/todo-app-kmp1084/cloud-run-source-deploy --include-tags
+```
+
+Sizes reported by the registry are **compressed**, and layers are shared between images —
+so a second deploy adds roughly the size of the jar, not a whole image. The free tier is
+0.5 GB.
 
 ## Verifying a deploy
 
@@ -193,6 +273,11 @@ https://console.cloud.google.com/run/detail/us-west1/todos-api/logs?project=todo
   environment variables. Deleting those revisions, or rotating both credentials, is what
   actually removes the exposure — switching to Secret Manager only protects values from
   that point forward.
+- **Every push to `main` deploys**, including docs-only and frontend-only commits. Harmless
+  but wasteful — a Cloud Build run and a pointless revision each time. Fixable with a paths
+  filter on the `deploy` job (the same problem `netlify.toml`'s `ignore` command solves for
+  the frontend).
+- **No lint step** in CI — no linter is configured for either half of the project.
 - **~13 second cold start** after idle (Cloud Run JVM start + Neon wake). Removable with
   `--min-instances=1`, at roughly $10–15/month.
 - **Neon free tier** autoscales `0.25 ↔ 2 CU`; the ceiling is capped at 0.25 CU so the
